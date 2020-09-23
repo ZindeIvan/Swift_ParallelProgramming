@@ -35,6 +35,11 @@ class NetworkService {
         case saved = "saved"
     }
     
+    enum NewsfeedFilters : String {
+        case post = "post"
+        case photo = "photo"
+    }
+    
     //Метод формирования сетевого запроса и вывода результата в кансоль
     private func networkRequest<T: Decodable>( type : T.Type, URL : String, method : HTTPMethod, parameters : Parameters, completion: ((Result<[Any], Error>) -> Void)? = nil){
         
@@ -167,6 +172,31 @@ class NetworkService {
         
     }
     
+    //Метод загрузки фото пользователя
+    func loadNews(token: String, filter : NewsfeedFilters, newsCount : Int, completion: ((Result<[News], Error>) -> Void)? = nil) {
+        let path = "/method/newsfeed.get"
+        
+        let params: Parameters = [
+            "access_token": token,
+            "filter" : filter.rawValue,
+            "count" : newsCount,
+            "v": apiVersion
+        ]
+        
+        networkRequest( type: News.self, URL: baseURL + path, method: .get, parameters: params){ result in
+            
+            switch result {
+            case let .success(photos):
+                completion?(.success(photos as! [News]))
+            case let .failure(error):
+                print(error.localizedDescription)
+                completion?(.failure(error))
+            }
+            
+        }
+        
+    }
+    
 }
 
 class ServerResponse<T: Decodable> : Decodable {
@@ -174,6 +204,6 @@ class ServerResponse<T: Decodable> : Decodable {
 }
 
 class Response<T: Decodable> : Decodable {
-    let count : Int = 0
+    var count : Int = 0
     var items : [T] = []
 }

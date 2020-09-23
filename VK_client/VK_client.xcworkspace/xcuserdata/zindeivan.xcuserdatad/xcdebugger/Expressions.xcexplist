@@ -70,10 +70,10 @@
          contextName = "PhotoViewController.setImageToView(imageID:imageView:):PhotoViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "photos">
+               value = "photos![friendPhotoID!]">
             </PersistentString>
             <PersistentString
-               value = "photos![friendPhotoID!]">
+               value = "photos">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -134,16 +134,16 @@
                value = "groupsListSearchData">
             </PersistentString>
             <PersistentString
-               value = "indexPath.item">
+               value = "groupsListSearchData?.count">
             </PersistentString>
             <PersistentString
                value = "groupsListSearchData?[indexPath.item]">
             </PersistentString>
             <PersistentString
-               value = "cell.groupNameLabel.text">
+               value = "indexPath.item">
             </PersistentString>
             <PersistentString
-               value = "groupsListSearchData?.count">
+               value = "cell.groupNameLabel.text">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -196,13 +196,21 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "News.__allocating_init(from:):News.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "try values.decode(String.self, forKey: .text)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "FriendsPhotoCollectionViewController.collectionView(_:cellForItemAt:):FriendsPhotoCollectionViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "photos">
+               value = "photos?[indexPath.row]">
             </PersistentString>
             <PersistentString
-               value = "photos?[indexPath.row]">
+               value = "photos">
             </PersistentString>
             <PersistentString
                value = "photos?[indexPath.row].photoSizeX">
@@ -241,6 +249,9 @@
                value = "print(json)">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in NetworkService.networkRequest&lt;A&gt;(type:URL:method:parameters:completion:):NetworkService.swift">
       </ContextState>
       <ContextState
          contextName = "FriendsViewController.loadUserAvatarsFromRealm():FriendsTableViewController.swift">
@@ -313,10 +324,10 @@
          contextName = "PhotoViewController.setImages():PhotoViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "photos">
+               value = "friendPhotoID">
             </PersistentString>
             <PersistentString
-               value = "friendPhotoID">
+               value = "photos">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
