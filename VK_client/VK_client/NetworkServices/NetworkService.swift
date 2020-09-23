@@ -15,7 +15,7 @@ class NetworkService {
     //Свойство основной ссылки на API
     private let baseURL : String = "https://api.vk.com"
     //Свойство версии API
-    private let apiVersion : String = "5.122"
+    private let apiVersion : String = "5.124"
     
     static let shared = NetworkService()
     
@@ -50,9 +50,9 @@ class NetworkService {
             case .success(let data):
                 
                 do {
-                    let users = try JSONDecoder().decode(ServerResponse<T>.self, from: data).response.items
+                    let items = try JSONDecoder().decode(ServerResponse<T>.self, from: data).response.items
                     
-                    completion?(.success(users))
+                    completion?(.success(items))
                 } catch {
                     completion?(.failure(error))
                 }
@@ -172,7 +172,7 @@ class NetworkService {
         
     }
     
-    //Метод загрузки фото пользователя
+    //Метод загрузки новостей пользователя
     func loadNews(token: String, filter : NewsfeedFilters, newsCount : Int, completion: ((Result<[News], Error>) -> Void)? = nil) {
         let path = "/method/newsfeed.get"
         
@@ -183,11 +183,11 @@ class NetworkService {
             "v": apiVersion
         ]
         
-        networkRequest( type: News.self, URL: baseURL + path, method: .get, parameters: params){ result in
+        networkNewsRequest(URL: baseURL + path, method: .get, parameters: params){ result in
             
             switch result {
-            case let .success(photos):
-                completion?(.success(photos as! [News]))
+            case let .success(news):
+                completion?(.success(news))
             case let .failure(error):
                 print(error.localizedDescription)
                 completion?(.failure(error))
@@ -195,6 +195,70 @@ class NetworkService {
             
         }
         
+    }
+    
+    //Метод разбора ответа запроса новостей с сервера
+    private func networkNewsRequest(URL : String, method : HTTPMethod, parameters : Parameters, completion: ((Result<[News], Error>) -> Void)? = nil){
+        
+        AF.request(URL, method: method, parameters: parameters).responseData { response in
+            
+            switch response.result {
+                
+            case .success(let data):
+                
+                var newsItems : [NewsItems]?
+                var groups : [NewsGroups]?
+                var profiles : [NewsProfiles]?
+                
+                let jsonParseGroup = DispatchGroup()
+                
+                DispatchQueue.global().async(group: jsonParseGroup) {
+                    do {
+                        let itemsresponse = try JSONDecoder().decode(ServerNewsResponse.self, from: data).response?.items
+                        newsItems = itemsresponse
+                    } catch {
+                        completion?(.failure(error))
+                    }
+                }
+                
+                DispatchQueue.global().async(group: jsonParseGroup) {
+                    do {
+                        let groupsresponse = try JSONDecoder().decode(ServerNewsResponse.self, from: data).response?.groups
+                        groups = groupsresponse
+                    } catch {
+                        completion?(.failure(error))
+                    }
+                }
+                
+                DispatchQueue.global().async(group: jsonParseGroup) {
+                    do {
+                        let profilesresponse = try JSONDecoder().decode(ServerNewsResponse.self, from: data).response?.profiles
+                        profiles = profilesresponse
+                    } catch {
+                        completion?(.failure(error))
+                    }
+                }
+                
+                jsonParseGroup.notify(queue: DispatchQueue.main) {
+                    guard let news = newsItems else {return}
+                    var newsResult : [News] = []
+                    for element in news {
+                        if element.ownerID < 0 {
+                            guard let group = groups?.filter({$0.id == -element.ownerID}).first else {continue}
+                            newsResult.append(News(item: element, owner: group))
+                        } else {
+                            guard let user = profiles?.filter({$0.id == element.ownerID}).first else {continue}
+                            newsResult.append(News(item: element, owner: user))
+                        }
+                    }
+                    completion?(.success(newsResult))
+                }
+                
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+            
+        }
     }
     
 }
@@ -207,3 +271,14 @@ class Response<T: Decodable> : Decodable {
     var count : Int = 0
     var items : [T] = []
 }
+
+class ServerNewsResponse : Decodable {
+    var response : NewsResponse?
+}
+
+class NewsResponse : Decodable{
+    var items : [NewsItems] = []
+    var profiles : [NewsProfiles] = []
+    var groups : [NewsGroups] = []
+}
+

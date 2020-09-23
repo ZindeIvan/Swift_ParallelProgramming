@@ -70,10 +70,10 @@
          contextName = "PhotoViewController.setImageToView(imageID:imageView:):PhotoViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "photos![friendPhotoID!]">
+               value = "photos">
             </PersistentString>
             <PersistentString
-               value = "photos">
+               value = "photos![friendPhotoID!]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -134,6 +134,9 @@
                value = "groupsListSearchData">
             </PersistentString>
             <PersistentString
+               value = "cell.groupNameLabel.text">
+            </PersistentString>
+            <PersistentString
                value = "groupsListSearchData?.count">
             </PersistentString>
             <PersistentString
@@ -141,9 +144,6 @@
             </PersistentString>
             <PersistentString
                value = "indexPath.item">
-            </PersistentString>
-            <PersistentString
-               value = "cell.groupNameLabel.text">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -207,10 +207,10 @@
          contextName = "FriendsPhotoCollectionViewController.collectionView(_:cellForItemAt:):FriendsPhotoCollectionViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "photos?[indexPath.row]">
+               value = "photos">
             </PersistentString>
             <PersistentString
-               value = "photos">
+               value = "photos?[indexPath.row]">
             </PersistentString>
             <PersistentString
                value = "photos?[indexPath.row].photoSizeX">
@@ -252,6 +252,14 @@
       </ContextState>
       <ContextState
          contextName = "closure #1 in NetworkService.networkRequest&lt;A&gt;(type:URL:method:parameters:completion:):NetworkService.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "ServerResponse&lt;T&gt;.self">
+            </PersistentString>
+            <PersistentString
+               value = "parameters">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "FriendsViewController.loadUserAvatarsFromRealm():FriendsTableViewController.swift">
@@ -324,10 +332,10 @@
          contextName = "PhotoViewController.setImages():PhotoViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "friendPhotoID">
+               value = "photos">
             </PersistentString>
             <PersistentString
-               value = "photos">
+               value = "friendPhotoID">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
