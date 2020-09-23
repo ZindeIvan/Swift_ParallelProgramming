@@ -55,7 +55,7 @@ extension NewsTableViewController : UITableViewDataSource, UITableViewDelegate  
         cell.commentLabel.text = String(newsList[indexPath.row].commentsCount)
         cell.shareLabel.text = String(newsList[indexPath.row].repostsCount)
         //Установим картинку новости
-        cell.newsImage.sd_setImage(with: URL(string: newsList[indexPath.row].photoSizeM), placeholderImage: UIImage(named: "newsImageError"))
+        cell.newsImage.sd_setImage(with: URL(string: newsList[indexPath.row].photoSizeX), placeholderImage: UIImage(named: "newsImageError"))
         //Установим иконку новости
         cell.newsIconView.sd_setImage(with: URL(string: newsList[indexPath.row].photo50), placeholderImage: UIImage(named: "error"))
         //Установим количество лайков

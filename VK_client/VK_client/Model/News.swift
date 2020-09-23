@@ -63,7 +63,7 @@ class NewsItems :  Decodable{
         
         let date = Date(timeIntervalSince1970: unixDate)
         let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = DateFormatter.Style.none
+        dateFormatter.timeStyle = DateFormatter.Style.short
         dateFormatter.dateStyle = DateFormatter.Style.medium
         dateFormatter.timeZone = .current
         self.localDate = dateFormatter.string(from: date)
