@@ -24,6 +24,8 @@ class NewsCell : UITableViewCell {
     @IBOutlet weak var shareButton : UIButton!
     @IBOutlet weak var likeLabel : UILabel!
     @IBOutlet weak var watchedCountLabel : UILabel!
+    @IBOutlet weak var shareLabel : UILabel!
+    @IBOutlet weak var commentLabel : UILabel!
     
     private var likePressed : Bool = false{
         didSet {
