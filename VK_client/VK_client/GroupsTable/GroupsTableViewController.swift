@@ -26,8 +26,6 @@ class GroupsTableViewController : UITableViewController {
         if searchText == "" {return groupsList}
         return groupsList?.filter("name CONTAINS[cd] %@", searchText)
     }
-    //Свойство содержащее ссылку на класс работы с сетевыми запросами
-    let networkService = NetworkService.shared
     //Свойство содержит ссылку на класс работы с Realm
     let realmService = RealmService.shared
     //Свойство - токен для наблюдения за изменениями данных в Realm
@@ -40,7 +38,7 @@ class GroupsTableViewController : UITableViewController {
         //Установим оповещения
         setNotifications()
         //Вызовем метод загрузки списка групп из сети
-        loadGroupsFromNetwork()
+        loadGroupsDataFromNetwork()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -115,20 +113,26 @@ extension GroupsTableViewController : UISearchBarDelegate {
 
 //Расширение для работы с сетью
 extension GroupsTableViewController {
-    //Метод загрузки списка групп из сети в базу
-    func loadGroupsFromNetwork(){
-        networkService.loadGroups(token: Session.instance.token){ [weak self] result in
-            switch result {
-            case let .success(groups):
-                DispatchQueue.main.async {
-                    //Сохраним полученные данные в Realm
-                    try? self?.realmService?.saveInRealm(objects: groups)
-                }
-            case let .failure(error):
-                self?.showAlert(title: "Error", message: error.localizedDescription)
-            }
-        }
+    
+    //Метод загрузки групп из сети и сохранении в Realm
+    func loadGroupsDataFromNetwork() {
+        //Получим запрос для групп
+        let request = NetworkService.shared.getGroupsRequest(token: Session.instance.token, groupsCount: 15)
+        //Создадим очередь
+        let queue = OperationQueue()
+        //Добавим метод загрузки данных из сети в очередь
+        let getDataOperation = GetDataFromRequestOperation(request: request)
+        queue.addOperation(getDataOperation)
+        //Добавим метод парсинга данных в очередь
+        let parseData = ParseGroupDataOperation()
+        parseData.addDependency(getDataOperation)
+        queue.addOperation(parseData)
+        //Добавим метод сохранения данных в Realm в очередь
+        let saveDataOperation = SaveDataInRealmOperation()
+        saveDataOperation.addDependency(parseData)
+        OperationQueue.main.addOperation(saveDataOperation)
     }
+
 }
 
 //Методы работы с оповещениями Realm
@@ -181,4 +185,3 @@ extension GroupsTableViewController {
         present(alertController, animated: true, completion: completion)
     }
 }
-
