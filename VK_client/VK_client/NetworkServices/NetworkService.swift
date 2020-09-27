@@ -116,6 +116,21 @@ class NetworkService {
         
     }
     
+    //Метод получения запроса групп пользователя
+    func getGroupsRequest(token: String, groupsCount : Int)-> DataRequest{
+        let path = "/method/groups.get"
+        
+        let parameters: Parameters = [
+            "access_token": token,
+            "extended": 1,
+            "count" : groupsCount,
+            "v": apiVersion
+        ]
+        
+        return AF.request(baseURL + path, method: .get, parameters: parameters)
+        
+    }
+    
     //Метод поиска групп
     func groupsSearch(token: String, searchQuery : String?, completion: ((Result<[Group], Error>) -> Void)? = nil){
         let path = "/method/groups.search"

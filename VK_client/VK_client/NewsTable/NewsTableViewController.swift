@@ -18,7 +18,7 @@ class NewsTableViewController : BaseViewController {
     //Массив новостей
     private var newsList : [News] = []
     //Свойство содержащее ссылку на класс работы с сетевыми запросами
-    let networkService = NetworkService.shared
+//    let networkService = NetworkService.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -76,7 +76,7 @@ extension NewsTableViewController : UITableViewDataSource, UITableViewDelegate  
 extension NewsTableViewController {
     //Метод загрузки списка новостей из сети
     func loadNewsFromNetwork(){
-        networkService.loadNews(token: Session.instance.token, filter: .post, newsCount: 10){ [weak self] result in
+        NetworkService.shared.loadNews(token: Session.instance.token, filter: .post, newsCount: 10){ [weak self] result in
             switch result {
             case let .success(news):
                 DispatchQueue.main.async {
