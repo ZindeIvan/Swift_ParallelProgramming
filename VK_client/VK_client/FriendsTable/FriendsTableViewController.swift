@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import PromiseKit
 
 //Класс для отображения списка друзей пользователя
 class FriendsViewController : BaseViewController{
@@ -61,7 +62,7 @@ class FriendsViewController : BaseViewController{
         
         if let friends = friendsListSearchData, friends.isEmpty {
             //Вызовем загрузку списка друзей из сети
-            loadFriendsFromNetwork()
+            launchloadFriendsPromiseChaining()
         }
         //Настроим секции
         setupSections()
@@ -73,7 +74,7 @@ class FriendsViewController : BaseViewController{
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        loadFriendsFromNetwork()
+        launchloadFriendsPromiseChaining()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -244,22 +245,20 @@ extension FriendsViewController : UISearchBarDelegate{
 
 //Расширение для работы с сетью
 extension FriendsViewController {
-    //Метод загрузки списка друзей из сети
-    func loadFriendsFromNetwork(){
-        
-        networkService.loadFriends(token: Session.instance.token){ [weak self] result in
-            switch result {
-            case let .success(users):
-                DispatchQueue.main.async {
-                    try? self?.realmService?.saveInRealm(objects: users)
-                }
-            case let .failure(error):
-                self?.showAlert(title: "Error", message: error.localizedDescription)
-            }
+    
+    //Метод загрузки списка друзей из сети при помощи Promise
+    func launchloadFriendsPromiseChaining() {
+        firstly{
+            networkService.loadFriendsPromise(token: Session.instance.token, usersCount: 30)
         }
-        
+        .get { [weak self] users in
+            DispatchQueue.main.async {
+               try? self?.realmService?.saveInRealm(objects: users)
+           }
+        }.catch { [weak self] error in
+            self?.showAlert(title: "Error", message: error.localizedDescription)
+        }
     }
-
 }
 
 //Методы работы с оповещениями Realm

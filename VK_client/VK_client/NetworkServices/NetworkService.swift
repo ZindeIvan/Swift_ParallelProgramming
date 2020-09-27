@@ -8,7 +8,8 @@
 
 import Foundation
 import Alamofire
-//import RealmSwift
+import PromiseKit
+
 
 //Класс для работы с сетевыми запросами
 class NetworkService {
@@ -41,7 +42,7 @@ class NetworkService {
     }
     
     //Метод формирования сетевого запроса и вывода результата в кансоль
-    private func networkRequest<T: Decodable>( type : T.Type, URL : String, method : HTTPMethod, parameters : Parameters, completion: ((Result<[Any], Error>) -> Void)? = nil){
+    private func networkRequest<T: Decodable>( type : T.Type, URL : String, method : HTTPMethod, parameters : Parameters, completion: ((Swift.Result<[Any], Error>) -> Void)? = nil){
         
         AF.request(URL, method: method, parameters: parameters).responseData { response in
             
@@ -65,7 +66,7 @@ class NetworkService {
     }
     
     //Метод загрузки друзей пользователя
-    func loadFriends(token: String, completion: ((Result<[User], Error>) -> Void)? = nil){
+    func loadFriends(token: String, completion: ((Swift.Result<[User], Error>) -> Void)? = nil){
         let path = "/method/friends.get"
         
         let params: Parameters = [
@@ -91,8 +92,36 @@ class NetworkService {
         
     }
     
+    //Метод загрузки друзей пользователя через Promise
+    func loadFriendsPromise(token: String, usersCount: Int)-> Promise<[User]> {
+        let path = "/method/friends.get"
+        
+        let params: Parameters = [
+            "access_token": token,
+            "order": "name",
+            "count" : usersCount,
+            "offset" : 0,
+            "fields" : "photo_50",
+            "v": apiVersion
+        ]
+        
+        return Promise { resolver in
+            networkRequest( type: User.self, URL: baseURL + path, method: .get, parameters: params) { result in
+                
+                switch result {
+                case let .success(users):
+                    resolver.fulfill(users as! [User])
+                case let .failure(error):
+                    print(error.localizedDescription)
+                    resolver.reject(error)
+                }
+                
+            }
+        }
+    }
+    
     //Метод загрузки групп пользователя
-    func loadGroups(token: String, completion: ((Result<[Group], Error>) -> Void)? = nil){
+    func loadGroups(token: String, completion: ((Swift.Result<[Group], Error>) -> Void)? = nil){
         let path = "/method/groups.get"
         
         let params: Parameters = [
@@ -132,7 +161,7 @@ class NetworkService {
     }
     
     //Метод поиска групп
-    func groupsSearch(token: String, searchQuery : String?, completion: ((Result<[Group], Error>) -> Void)? = nil){
+    func groupsSearch(token: String, searchQuery : String?, completion: ((Swift.Result<[Group], Error>) -> Void)? = nil){
         let path = "/method/groups.search"
         
         let params: Parameters = [
@@ -160,7 +189,7 @@ class NetworkService {
     }
     
     //Метод загрузки фото пользователя
-    func loadPhotos(token: String, ownerID : Int, albumID : AlbumID, photoCount : Int,completion: ((Result<[Photo], Error>) -> Void)? = nil) {
+    func loadPhotos(token: String, ownerID : Int, albumID : AlbumID, photoCount : Int,completion: ((Swift.Result<[Photo], Error>) -> Void)? = nil) {
         let path = "/method/photos.get"
         
         let params: Parameters = [
@@ -188,7 +217,7 @@ class NetworkService {
     }
     
     //Метод загрузки новостей пользователя
-    func loadNews(token: String, filter : NewsfeedFilters, newsCount : Int, completion: ((Result<[News], Error>) -> Void)? = nil) {
+    func loadNews(token: String, filter : NewsfeedFilters, newsCount : Int, completion: ((Swift.Result<[News], Error>) -> Void)? = nil) {
         let path = "/method/newsfeed.get"
         
         let params: Parameters = [
@@ -213,7 +242,7 @@ class NetworkService {
     }
     
     //Метод разбора ответа запроса новостей с сервера
-    private func networkNewsRequest(URL : String, method : HTTPMethod, parameters : Parameters, completion: ((Result<[News], Error>) -> Void)? = nil){
+    private func networkNewsRequest(URL : String, method : HTTPMethod, parameters : Parameters, completion: ((Swift.Result<[News], Error>) -> Void)? = nil){
         
         AF.request(URL, method: method, parameters: parameters).responseData { response in
             
