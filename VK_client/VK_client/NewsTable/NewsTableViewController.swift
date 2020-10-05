@@ -50,7 +50,7 @@ extension NewsTableViewController : UITableViewDataSource, UITableViewDelegate  
         cell.newsDate.text = newsList[indexPath.row].date
         //Установим количество просмотров
         cell.watchedCountLabel.text = String(newsList[indexPath.row].viewsCount)
-        //Установим надписьлайков
+        //Установим надпись лайков
         cell.likeLabel.text = String(newsList[indexPath.row].likesCount)
         cell.commentLabel.text = String(newsList[indexPath.row].commentsCount)
         cell.shareLabel.text = String(newsList[indexPath.row].repostsCount)
