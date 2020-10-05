@@ -18,6 +18,8 @@ class GroupsSearchTableViewController : UITableViewController {
 
     //Свойство содержащее ссылку на класс работы с сетевыми запросами
     let networkService = NetworkService.shared
+    //Свойство содержащее сервис загрузки изображений в кэш
+    private var imageCacheService : ImageCacheService?
     
     //Метод возвращает Группу по индексу
     func getGroupByIndex (index : Int) -> Group? {
@@ -31,6 +33,8 @@ class GroupsSearchTableViewController : UITableViewController {
         groupsSearchBar.delegate = self
         //Вызовем метод поиска групп в сети
         searchGroupsInNetwork(searchText: "")
+        //Проинициализируем кэш через tableView
+        imageCacheService = ImageCacheService(container: tableView)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -43,7 +47,7 @@ class GroupsSearchTableViewController : UITableViewController {
         //Зададим надпись ячейки
         cell.groupSearchNameLabel.text = groupsList[indexPath.row].name
         //Установим иконку ячейки
-        cell.groupSearchIconView.sd_setImage(with: URL(string: groupsList[indexPath.row].photo50), placeholderImage: UIImage(named: "error"))
+        cell.groupSearchIconView.image = imageCacheService?.getPhoto(atIndexPath: indexPath, byUrl: groupsList[indexPath.row].photo50)
         return cell
     }
 }
