@@ -11,13 +11,13 @@ import UIKit
 //Класс для отображения списка доступных групп пользователя
 class GroupsSearchTableViewController : UITableViewController {
     //Элемент поиска
-    @IBOutlet weak var groupsSearchBar : UISearchBar!
+    @IBOutlet private weak var groupsSearchBar : UISearchBar!
     
-   //Свойство содержащее массив всех групп типа структура Group
-   private var groupsList : [Group] = []
-
+    //Свойство содержащее массив всех групп типа структура Group
+    private var groupsList : [Group] = []
+    
     //Свойство содержащее ссылку на класс работы с сетевыми запросами
-    let networkService = NetworkService.shared
+    private let networkService = NetworkService.shared
     //Свойство содержащее сервис загрузки изображений в кэш
     private var imageCacheService : ImageCacheService?
     
@@ -44,17 +44,15 @@ class GroupsSearchTableViewController : UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "GroupsSearchTableCell") as? GroupsSearchTableCell else { fatalError() }
-        //Зададим надпись ячейки
-        cell.groupSearchNameLabel.text = groupsList[indexPath.row].name
-        //Установим иконку ячейки
-        cell.groupSearchIconView.image = imageCacheService?.getPhoto(atIndexPath: indexPath, byUrl: groupsList[indexPath.row].photo50)
+        cell.configure(name: groupsList[indexPath.row].name,
+                       icon: imageCacheService?.getPhoto(atIndexPath: indexPath, byUrl: groupsList[indexPath.row].photo50))
         return cell
     }
 }
 
 //Расширение для строки поиска
 extension GroupsSearchTableViewController : UISearchBarDelegate {
-   
+    
     //Метод обработки нажатия кнопки Отмена
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         //Уберем текст в строке поиска

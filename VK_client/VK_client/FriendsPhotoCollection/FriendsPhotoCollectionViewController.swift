@@ -15,18 +15,18 @@ class FriendsPhotoCollectionViewController : UICollectionViewController{
     //Свойство идентификатора друга пользователя
     var friendID : Int?
     //Свойство содержащее запрос фото
-    var photos : Results<Photo>?  {
+    private var photos : Results<Photo>?  {
         let photos: Results<Photo>? = realmService?.loadFromRealm().filter("ownerID == %i", friendID ?? 0)
         return photos?.sorted(byKeyPath: "id", ascending: true)
     }
     //Свойство количество фото для отображения
-    var photoCount : Int = 3
+    private var photoCount : Int = 3
     
     //Свойство содержащее ссылку на класс работы с сетевыми запросами
-    let networkService = NetworkService.shared
+    private let networkService = NetworkService.shared
     
     //Свойство содержит ссылку на класс работы с Realm
-    let realmService = RealmService.shared
+    private let realmService = RealmService.shared
     //Свойство - токен для наблюдения за изменениями данных в Realm
     private var photosNotificationToken: NotificationToken?
     
@@ -73,7 +73,7 @@ class FriendsPhotoCollectionViewController : UICollectionViewController{
 //Расширение для работы с сетью
 extension FriendsPhotoCollectionViewController {
     //Метод загрузки фото из сети
-    func loadPhotosFromNetwork(){
+    private func loadPhotosFromNetwork(){
         networkService.loadPhotos(token: Session.instance.token, ownerID: friendID ?? 0, albumID: .profile, photoCount: photoCount){ [weak self] result in
             switch result {
             case let .success(photos):
@@ -93,7 +93,7 @@ extension FriendsPhotoCollectionViewController {
 extension FriendsPhotoCollectionViewController {
 
     //Метод установки оповещений
-    func setNotifications(){
+    private func setNotifications(){
         //Установим наблюдателя для событий с данными в БД
         photosNotificationToken = photos?.observe { [weak self] change in
             switch change {
@@ -130,7 +130,7 @@ extension FriendsPhotoCollectionViewController {
     }
     
     //Метод вызова оповещений об ошибках
-    func showAlert(title: String? = nil,
+    private func showAlert(title: String? = nil,
                    message: String? = nil,
                    handler: ((UIAlertAction) -> ())? = nil,
                    completion: (() -> Void)? = nil) {

@@ -11,13 +11,13 @@ import UIKit
 //Класс ячейки списка доступных групп пользователя
 class GroupsSearchTableCell : UITableViewCell {
     //Иконка группы
-    @IBOutlet weak var groupSearchIconView : UIImageView!
+    @IBOutlet private weak var groupSearchIconView : UIImageView!
     //Название группы
-    @IBOutlet weak var groupSearchNameLabel : UILabel!
+    @IBOutlet private weak var groupSearchNameLabel : UILabel!
     //Привяка высоты иконки
-    @IBOutlet weak var groupSearchIconHeightConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var groupSearchIconHeightConstraint: NSLayoutConstraint!
     //Привязка ширины иконки
-    @IBOutlet weak var groupSearchIconWidthConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var groupSearchIconWidthConstraint: NSLayoutConstraint!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -54,6 +54,12 @@ class GroupsSearchTableCell : UITableViewCell {
             }
             
         }
+    }
+    
+    //Метод конфигурирования ячейки
+    func configure(name: String, icon: UIImage?){
+        self.groupSearchNameLabel.text = name
+        self.groupSearchIconView.image = icon
     }
 }
 

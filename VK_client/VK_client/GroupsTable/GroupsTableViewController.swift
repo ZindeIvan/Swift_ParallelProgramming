@@ -13,7 +13,7 @@ import RealmSwift
 //Класс для отображения списка групп пользователя
 class GroupsTableViewController : UITableViewController {
     //Элемент поиска
-    @IBOutlet weak var groupsSearchBar : UISearchBar!
+    @IBOutlet private weak var groupsSearchBar : UISearchBar!
     
     //Свойство содержащее запрос групп пользователя
     private var groupsList : Results<Group>?  {
@@ -27,7 +27,7 @@ class GroupsTableViewController : UITableViewController {
         return groupsList?.filter("name CONTAINS[cd] %@", searchText)
     }
     //Свойство содержит ссылку на класс работы с Realm
-    let realmService = RealmService.shared
+    private let realmService = RealmService.shared
     //Свойство - токен для наблюдения за изменениями данных в Realm
     private var groupsListSearchDataNotificationToken: NotificationToken?
     
@@ -55,10 +55,10 @@ class GroupsTableViewController : UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "GroupsTableCell") as? GroupsTableCell else { fatalError() }
-        //Зададим надпись ячейки
-        cell.groupNameLabel.text = groupsListSearchData?[indexPath.row].name
-        //Установим иконку ячейки
-        cell.groupIconView.sd_setImage(with: URL(string: (groupsListSearchData?[indexPath.item].photo50)!), placeholderImage: UIImage(named: "error"))
+        //Сконфигурируем ячейку
+        cell.configure(name: groupsListSearchData?[indexPath.row].name ?? "",
+                       iconURL: groupsListSearchData?[indexPath.item].photo50)
+
         return cell
     }
     
@@ -115,7 +115,7 @@ extension GroupsTableViewController : UISearchBarDelegate {
 extension GroupsTableViewController {
     
     //Метод загрузки групп из сети и сохранении в Realm
-    func loadGroupsDataFromNetwork() {
+    private func loadGroupsDataFromNetwork() {
         //Получим запрос для групп
         let request = NetworkService.shared.getGroupsRequest(token: Session.instance.token, groupsCount: 15)
         //Создадим очередь
@@ -139,7 +139,7 @@ extension GroupsTableViewController {
 extension GroupsTableViewController {
     
     //Метод установки оповещений
-    func setNotifications(){
+    private func setNotifications(){
         //Установим наблюдателя для событий с данными в БД
         groupsListSearchDataNotificationToken = groupsListSearchData?.observe { [weak self] change in
             switch change {
@@ -175,7 +175,7 @@ extension GroupsTableViewController {
         
     }
     //Метод вызова оповещений об ошибках
-    func showAlert(title: String? = nil,
+    private func showAlert(title: String? = nil,
                    message: String? = nil,
                    handler: ((UIAlertAction) -> ())? = nil,
                    completion: (() -> Void)? = nil) {

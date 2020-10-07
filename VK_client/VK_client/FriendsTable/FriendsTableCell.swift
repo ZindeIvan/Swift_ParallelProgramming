@@ -11,19 +11,19 @@ import UIKit
 //Класс ячейки списка друзей пользователя
 class FriendsTableCell : UITableViewCell {
     //Надпись имени друга
-    @IBOutlet weak var friendNameLabel : UILabel!
+    @IBOutlet private weak var friendNameLabel : UILabel!
     //Тень иконки аватарки друга
-    @IBOutlet weak var iconShadowView : IconShadowView!
+    @IBOutlet private weak var iconShadowView : IconShadowView!
     //Округление иконки аватарки друга
-    @IBOutlet weak var iconImageView : IconView!
+    @IBOutlet private weak var iconImageView : IconView!
     //Привяка высоты иконки
-    @IBOutlet weak var iconImageHeightConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var iconImageHeightConstraint: NSLayoutConstraint!
     //Привязка ширины иконки
-    @IBOutlet weak var iconImageWidthConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var iconImageWidthConstraint: NSLayoutConstraint!
     //Привяка высоты тени иконки
-    @IBOutlet weak var iconShadowHeightConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var iconShadowHeightConstraint: NSLayoutConstraint!
     //Привязка ширины тени иконки
-    @IBOutlet weak var iconShadowWidthConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var iconShadowWidthConstraint: NSLayoutConstraint!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -65,5 +65,13 @@ class FriendsTableCell : UITableViewCell {
             }
             
         }
+    }
+    
+    //Метод конфигурирования ячейки
+    func configure(name: String, iconURL: String?){
+        self.friendNameLabel.text = name
+        self.iconImageView.sd_setImage(with: URL(string: iconURL ?? ""), placeholderImage: UIImage(named: "error"))
+        self.iconShadowView.configureLayer()
+        self.iconImageView.configureLayer()
     }
 }

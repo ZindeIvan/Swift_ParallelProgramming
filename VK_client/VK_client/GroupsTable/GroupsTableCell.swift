@@ -11,13 +11,13 @@ import UIKit
 //Класс ячейки списка групп пользователя
 class GroupsTableCell : UITableViewCell {
     //Иконка группы
-    @IBOutlet weak var groupIconView : UIImageView!
+    @IBOutlet private weak var groupIconView : UIImageView!
     //Название группы
-    @IBOutlet weak var groupNameLabel : UILabel!
+    @IBOutlet private weak var groupNameLabel : UILabel!
     //Привяка высоты иконки
-    @IBOutlet weak var groupIconHeightConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var groupIconHeightConstraint: NSLayoutConstraint!
     //Привязка ширины иконки
-    @IBOutlet weak var groupIconWidthConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var groupIconWidthConstraint: NSLayoutConstraint!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -53,5 +53,11 @@ class GroupsTableCell : UITableViewCell {
             }
             
         }
+    }
+    
+    //Метод конфигурирования ячейки
+    func configure(name: String, iconURL: String?){
+        self.groupNameLabel.text = name
+        self.groupIconView.sd_setImage(with: URL(string: iconURL ?? ""), placeholderImage: UIImage(named: "error"))
     }
 }
