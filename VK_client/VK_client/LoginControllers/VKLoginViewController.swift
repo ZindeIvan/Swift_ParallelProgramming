@@ -11,14 +11,16 @@ import WebKit
 
 //Класс для отображения экрана входа в веб формате
 class VKLoginViewController : UIViewController {
-    //Название перехода для входа
-    let loginSegueName : String = "LoginSegueWebView"
+
     //Веб форма
-    @IBOutlet var webView: WKWebView! {
+    @IBOutlet private var webView: WKWebView! {
         didSet{
             webView.navigationDelegate = self
         }
     }
+    
+    //Название перехода для входа
+    private let loginSegueName : String = "LoginSegueWebView"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +29,7 @@ class VKLoginViewController : UIViewController {
         
     }
     //Метод загрузки страницы входа
-    func loadLoginPage(){
+    private func loadLoginPage(){
         
         var components = URLComponents()
         components.scheme = "https"
@@ -35,7 +37,6 @@ class VKLoginViewController : UIViewController {
         components.path = "/authorize"
         components.queryItems = [
             URLQueryItem(name: "client_id", value: "7565388"),
-//            URLQueryItem(name: "scope", value: "262150"),
             URLQueryItem(name: "scope", value: "friends,photos,wall,groups"),
             URLQueryItem(name: "display", value: "mobile"),
             URLQueryItem(name: "redirect_uri", value: "https://oauth.vk.com/blank.html"),
@@ -73,7 +74,7 @@ extension VKLoginViewController : WKNavigationDelegate {
     }
     
     //Метод получения параметров URL в виде словаря
-    func getURLParams(URLfragment : String?) -> [String:String]{
+    private func getURLParams(URLfragment : String?) -> [String:String]{
        return URLfragment!
             .components(separatedBy: "&")
             .map { $0.components(separatedBy: "=") }

@@ -16,21 +16,21 @@ class IconShadowView : UIView {
     }
     
     //Цвет тени
-    var shadowColor : UIColor = .black {
+    private var shadowColor : UIColor = .black {
         didSet{
             updateShadowColor()
         }
     }
     
     //Прозрачность тени
-    var shadowOpacity : Float = 0.8 {
+    private var shadowOpacity : Float = 0.8 {
         didSet {
             updateShadowOpasity()
         }
     }
     
     //Радиус(размер) тени
-    var shadowRadius : CGFloat = 6 {
+    private var shadowRadius : CGFloat = 6 {
         didSet {
             updateShadowRadius()
         }

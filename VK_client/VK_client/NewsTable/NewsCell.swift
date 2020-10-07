@@ -14,18 +14,18 @@ import UIKit
 
 class NewsCell : UITableViewCell {
     
-    @IBOutlet weak var newsIconView : UIImageView!
-    @IBOutlet weak var newsOwner : UILabel!
-    @IBOutlet weak var newsDate : UILabel!
-    @IBOutlet weak var newsText : UILabel!
-    @IBOutlet weak var newsImage : UIImageView!
-    @IBOutlet weak var likeButton : UIButton!
-    @IBOutlet weak var commentButton : UIButton!
-    @IBOutlet weak var shareButton : UIButton!
-    @IBOutlet weak var likeLabel : UILabel!
-    @IBOutlet weak var watchedCountLabel : UILabel!
-    @IBOutlet weak var shareLabel : UILabel!
-    @IBOutlet weak var commentLabel : UILabel!
+    @IBOutlet private weak var newsIconView : UIImageView!
+    @IBOutlet private weak var newsOwner : UILabel!
+    @IBOutlet private weak var newsDate : UILabel!
+    @IBOutlet private weak var newsText : UILabel!
+    @IBOutlet private weak var newsImage : UIImageView!
+    @IBOutlet private weak var likeButton : UIButton!
+    @IBOutlet private weak var commentButton : UIButton!
+    @IBOutlet private weak var shareButton : UIButton!
+    @IBOutlet private weak var likeLabel : UILabel!
+    @IBOutlet private weak var watchedCountLabel : UILabel!
+    @IBOutlet private weak var shareLabel : UILabel!
+    @IBOutlet private weak var commentLabel : UILabel!
     
     private var likePressed : Bool = false{
         didSet {
@@ -79,4 +79,25 @@ class NewsCell : UITableViewCell {
         likePressed = !likePressed
     }
     
+    //Метод конфигурирования ячейки
+    func configure(news: News){
+        //Установим автора
+        self.newsOwner.text = String(news.owner)
+        //Установим текст новости
+        self.newsText.text = news.text
+        //Установим дату новости
+        self.newsDate.text = news.date
+        //Установим количество просмотров
+        self.watchedCountLabel.text = String(news.viewsCount)
+        //Установим надпись лайков
+        self.likeLabel.text = String(news.likesCount)
+        self.commentLabel.text = String(news.commentsCount)
+        self.shareLabel.text = String(news.repostsCount)
+        //Установим картинку новости
+        self.newsImage.sd_setImage(with: URL(string: news.photoSizeX), placeholderImage: UIImage(named: "newsImageError"))
+        //Установим иконку новости
+        self.newsIconView.sd_setImage(with: URL(string: news.photo50), placeholderImage: UIImage(named: "error"))
+        //Установим количество лайков
+        self.likeCount = news.likesCount
+    }
 }

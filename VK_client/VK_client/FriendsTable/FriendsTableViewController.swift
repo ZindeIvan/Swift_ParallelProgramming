@@ -13,7 +13,7 @@ import PromiseKit
 //Класс для отображения списка друзей пользователя
 class FriendsViewController : BaseViewController{
     //Элемент таблицы
-    @IBOutlet weak var friendsTableView: UITableView!{
+    @IBOutlet private weak var friendsTableView: UITableView!{
         didSet{
             friendsTableView.dataSource = self
             friendsTableView.delegate = self
@@ -33,27 +33,27 @@ class FriendsViewController : BaseViewController{
         return users?.filter("(firstName CONTAINS[cd] %@) || (lastName CONTAINS[cd] %@)", searchText, searchText)
     }
     //Массив содержащий отсортированных пользователей до изменения
-    var sortedUsers : [UserPlaceholder] = []
+    private var sortedUsers : [UserPlaceholder] = []
     //Структура пользователя
-    struct UserPlaceholder {
+    private struct UserPlaceholder {
         var id : Int = 0
         var firstName : String = ""
         var lastName : String = ""
     }
     
     //Словарь секций
-    var sections : [Character: [UserPlaceholder]] = [:]
+    private var sections : [Character: [UserPlaceholder]] = [:]
     //Массив заголовков секций
-    var sectionsTitles : [Character] = []
+    private var sectionsTitles : [Character] = []
     
     //Текущий выбранный индекс таблицы
-    var selectedIndexPath : IndexPath?
+    private var selectedIndexPath : IndexPath?
     
     //Свойство содержащее ссылку на класс работы с сетевыми запросами
-    let networkService = NetworkService.shared
+    private let networkService = NetworkService.shared
     
     //Свойство содержит ссылку на класс работы с Realm
-    let realmService = RealmService.shared
+    private let realmService = RealmService.shared
     //Свойство - токен для наблюдения за изменениями данных в Realm
     private var filteredFriendsNotificationToken: NotificationToken?
     
@@ -100,7 +100,7 @@ class FriendsViewController : BaseViewController{
     }
     
     //Метод настройки секций
-    func setupSections (){
+    private func setupSections (){
         sections = [:]
         //Обойдем массив пользователей
         guard let friendsArray = friendsListSearchData else {return}
@@ -125,7 +125,7 @@ class FriendsViewController : BaseViewController{
     }
     
     //Метод настройки элемента прокрутки
-    func setupFriendsScroller (){
+    private func setupFriendsScroller (){
         //Вызовем метод заполнения массива букв элемента прокрутки
         friendsScroller.setLetters(letters: sectionsTitles)
         //Вызовем метод настройки элемента прокрутки
@@ -163,29 +163,10 @@ extension FriendsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "FriendsTableCell") as? FriendsTableCell else { fatalError() }
-        guard let friend = sections[sectionsTitles[indexPath.section]]?[indexPath.row] else {
-            fatalError()
-        }
-        //Найдем индекс друга в списке друзей
-        let index = friendsListSearchData?.firstIndex { (user) -> Bool in
-            if user.id == friend.id {
-                return true
-            }
-            return false
-        }
         
-        //Зададим надпись ячейки
-        cell.friendNameLabel.text = getFullName(friendsListSearchData?[index!].firstName, friendsListSearchData?[index!].lastName)
-        //Установим иконку ячейки
-        if let photo = friendsListSearchData?[index!].photo50 {
-            cell.iconImageView.sd_setImage(with: URL(string: photo), placeholderImage: UIImage(named: "error"))
-        } else {
-            cell.iconImageView.image = UIImage(named: "error")
-        }
-        //Установим настройки тени иконки аватарки друга
-        cell.iconShadowView.configureLayer()
-        //Установим настройки скругления иконки аватарки друга
-        cell.iconImageView.configureLayer()
+        //Сконфигурируем ячейку
+        configureCell(indexPath: indexPath, cell: cell)
+
         return cell
     }
     
@@ -197,8 +178,34 @@ extension FriendsViewController: UITableViewDataSource {
     }
     
     //Метод получения полного имени из имени и фамилии
-    func getFullName (_ firstName : String?,_ lastName : String?) -> String{
+    private func getFullName (_ firstName : String?,_ lastName : String?) -> String{
         return (firstName ?? "") + " " + (lastName ?? "")
+    }
+    
+    //Метод конфигурирования ячейки
+    private func configureCell(indexPath : IndexPath, cell : FriendsTableCell) {
+        
+        guard let friend = sections[sectionsTitles[indexPath.section]]?[indexPath.row] else {
+            fatalError()
+        }
+        //Найдем индекс друга в списке друзей
+        let index = friendsListSearchDataIndex(friend: friend)
+        //Сконфигурируем ячейку
+        cell.configure(name: getFullName(friendsListSearchData?[index!].firstName,
+                                         friendsListSearchData?[index!].lastName),
+                       iconURL: friendsListSearchData?[index!].photo50)
+
+    }
+    //Метод получения индекса по пользователю
+    private func friendsListSearchDataIndex(friend :  UserPlaceholder)-> Int?{
+        //Найдем индекс друга в списке друзей
+        let index = friendsListSearchData?.firstIndex { (user) -> Bool in
+            if user.id == friend.id {
+                return true
+            }
+            return false
+        }
+        return index
     }
     
 }
@@ -247,7 +254,7 @@ extension FriendsViewController : UISearchBarDelegate{
 extension FriendsViewController {
     
     //Метод загрузки списка друзей из сети при помощи Promise
-    func launchloadFriendsPromiseChaining() {
+    private func launchloadFriendsPromiseChaining() {
         firstly{
             networkService.loadFriendsPromise(token: Session.instance.token, usersCount: 30)
         }
@@ -265,7 +272,7 @@ extension FriendsViewController {
 extension FriendsViewController {
 
     //Метод установки оповещений
-    func setNotifications(){
+    private func setNotifications(){
         //Установим наблюдателя для событий с данными в БД
         filteredFriendsNotificationToken = friendsListSearchData?.observe { [weak self] change in
             switch change {
@@ -322,7 +329,7 @@ extension FriendsViewController {
     }
     
     //Метод получения индексов для вставки
-    func getIndexPathsFromIndexes(indexes: [Int]) -> [IndexPath]{
+    private func getIndexPathsFromIndexes(indexes: [Int]) -> [IndexPath]{
         var indexPaths : [IndexPath] = []
         for index in indexes {
             let friend = sortedUsers[index]
@@ -342,7 +349,7 @@ extension FriendsViewController {
     }
     
     //Метод получения секций для удаления
-    func getSectionsToDelete(indexes: [IndexPath]) -> IndexSet{
+    private func getSectionsToDelete(indexes: [IndexPath]) -> IndexSet{
         let indexSetToDelete = NSMutableIndexSet()
         var tempSections = sections
         for index in indexes {
@@ -357,7 +364,7 @@ extension FriendsViewController {
     }
     
     //Метод получения секция для вставки
-    func getSectionsToInsert(oldSectionsTitles : [Character]) -> IndexSet{
+    private func getSectionsToInsert(oldSectionsTitles : [Character]) -> IndexSet{
         let indexSetToInsert = NSMutableIndexSet()
         for title in sectionsTitles {
             if oldSectionsTitles.firstIndex(of: title) == nil {
@@ -368,7 +375,7 @@ extension FriendsViewController {
     }
     
     //Метод установки пользователей до изменения
-    func setupSortedUsers(){
+    private func setupSortedUsers(){
         if let friendsArray = friendsListSearchData {
             sortedUsers = friendsArray.map {
                 UserPlaceholder(id: $0.id, firstName: $0.firstName, lastName: $0.lastName)

@@ -13,12 +13,10 @@ import SDWebImage
 class NewsTableViewController : BaseViewController {
 
     //Таблица новостей
-    @IBOutlet weak var newsTableView : UITableView!
+    @IBOutlet private weak var newsTableView : UITableView!
     
     //Массив новостей
     private var newsList : [News] = []
-    //Свойство содержащее ссылку на класс работы с сетевыми запросами
-//    let networkService = NetworkService.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,24 +40,8 @@ extension NewsTableViewController : UITableViewDataSource, UITableViewDelegate  
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell") as? NewsCell else { fatalError() }
-        //Установим автора
-        cell.newsOwner.text = String(newsList[indexPath.row].owner)
-        //Установим текст новости
-        cell.newsText.text = newsList[indexPath.row].text
-        //Установим дату новости
-        cell.newsDate.text = newsList[indexPath.row].date
-        //Установим количество просмотров
-        cell.watchedCountLabel.text = String(newsList[indexPath.row].viewsCount)
-        //Установим надпись лайков
-        cell.likeLabel.text = String(newsList[indexPath.row].likesCount)
-        cell.commentLabel.text = String(newsList[indexPath.row].commentsCount)
-        cell.shareLabel.text = String(newsList[indexPath.row].repostsCount)
-        //Установим картинку новости
-        cell.newsImage.sd_setImage(with: URL(string: newsList[indexPath.row].photoSizeX), placeholderImage: UIImage(named: "newsImageError"))
-        //Установим иконку новости
-        cell.newsIconView.sd_setImage(with: URL(string: newsList[indexPath.row].photo50), placeholderImage: UIImage(named: "error"))
-        //Установим количество лайков
-        cell.likeCount = newsList[indexPath.row].likesCount
+        //Сконфигурируем ячейку
+        cell.configure(news: newsList[indexPath.row])
         
         return cell
     }
@@ -75,7 +57,7 @@ extension NewsTableViewController : UITableViewDataSource, UITableViewDelegate  
 //Расширение для работы с сетью
 extension NewsTableViewController {
     //Метод загрузки списка новостей из сети
-    func loadNewsFromNetwork(){
+    private func loadNewsFromNetwork(){
         NetworkService.shared.loadNews(token: Session.instance.token, filter: .post, newsCount: 10){ [weak self] result in
             switch result {
             case let .success(news):
