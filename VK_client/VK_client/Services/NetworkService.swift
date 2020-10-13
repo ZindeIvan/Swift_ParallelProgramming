@@ -71,6 +71,7 @@ class NetworkService {
         
         let params: Parameters = [
             "access_token": token,
+            "user_id" : Session.instance.userID,
             "order": "name",
             "count" : 20,
             "offset" : 0,
@@ -98,6 +99,7 @@ class NetworkService {
         
         let params: Parameters = [
             "access_token": token,
+            "user_id" : Session.instance.userID,
             "order": "name",
             "count" : usersCount,
             "offset" : 0,
@@ -217,12 +219,13 @@ class NetworkService {
     }
     
     //Метод загрузки новостей пользователя
-    func loadNews(token: String, filter : NewsfeedFilters, newsCount : Int, completion: ((Swift.Result<[News], Error>) -> Void)? = nil) {
+    func loadNews(startFrom : String, token: String, filter : NewsfeedFilters, newsCount : Int, completion: ((Swift.Result<[News], Error>) -> Void)? = nil) {
         let path = "/method/newsfeed.get"
         
         let params: Parameters = [
             "access_token": token,
             "filter" : filter.rawValue,
+            "start_from": startFrom,
             "count" : newsCount,
             "v": apiVersion
         ]
@@ -253,6 +256,7 @@ class NetworkService {
                 var newsItems : [NewsItems]?
                 var groups : [NewsGroups]?
                 var profiles : [NewsProfiles]?
+                var nextFrom : String?
                 
                 let jsonParseGroup = DispatchGroup()
                 
@@ -283,6 +287,15 @@ class NetworkService {
                     }
                 }
                 
+                DispatchQueue.global().async(group: jsonParseGroup) {
+                    do {
+                        let nextFromresponse = try JSONDecoder().decode(ServerNewsResponse.self, from: data).response?.next_from
+                        nextFrom = nextFromresponse
+                    } catch {
+                        completion?(.failure(error))
+                    }
+                }
+                
                 jsonParseGroup.notify(queue: DispatchQueue.main) {
                     guard let news = newsItems else {return}
                     var newsResult : [News] = []
@@ -295,6 +308,7 @@ class NetworkService {
                             newsResult.append(News(item: element, owner: user))
                         }
                     }
+                    Session.instance.nextFrom = nextFrom ?? ""
                     completion?(.success(newsResult))
                 }
                 
@@ -324,5 +338,8 @@ class NewsResponse : Decodable{
     var items : [NewsItems] = []
     var profiles : [NewsProfiles] = []
     var groups : [NewsGroups] = []
+    var next_from : String = ""
+    
+    
 }
 

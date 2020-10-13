@@ -20,8 +20,14 @@ class News {
     var commentsCount : Int = 0
     //Фото
     var photoSizeX : String = ""
+    var photoSizeXHeight : Double = 0
+    var photoSizeXWidth : Double = 0
     var photoSizeM : String = ""
+    var photoSizeMHeight : Double = 0
+    var photoSizeMWidth : Double = 0
     var photoSizeS : String = ""
+    var photoSizeSHeight : Double = 0
+    var photoSizeSWidth : Double = 0
     //Дата
     var date : String = ""
     //Текст новости
@@ -46,8 +52,14 @@ class News {
         self.repostsCount = item.repostsCount
         self.commentsCount = item.commentsCount
         self.photoSizeX = item.photoSizeX
+        self.photoSizeXHeight = item.photoSizeXHeight
+        self.photoSizeXWidth = item.photoSizeXWidth
         self.photoSizeM = item.photoSizeM
+        self.photoSizeMHeight = item.photoSizeMHeight
+        self.photoSizeMWidth = item.photoSizeMWidth
         self.photoSizeS = item.photoSizeS
+        self.photoSizeSHeight = item.photoSizeSHeight
+        self.photoSizeSWidth = item.photoSizeSWidth
         self.date = item.localDate
         self.text = item.text
         

@@ -32,7 +32,7 @@ class User: Object, Decodable{
         self.id = try values.decode(Int.self, forKey: .id)
         self.firstName = try values.decode(String.self, forKey: .firstName)
         self.lastName = try values.decode(String.self, forKey: .lastName)
-        self.online = try values.decode(Int.self, forKey: .online)
+//        self.online = try values.decode(Int.self, forKey: .online)
         self.photo50 = try values.decode(String.self, forKey: .photo50)
         
     }
