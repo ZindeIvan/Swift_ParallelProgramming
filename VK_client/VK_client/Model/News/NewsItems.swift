@@ -22,8 +22,14 @@ class NewsItems :  Decodable{
     var commentsCount : Int = 0
     //Фото новости
     var photoSizeX : String = ""
+    var photoSizeXHeight : Double = 0
+    var photoSizeXWidth : Double = 0
     var photoSizeM : String = ""
+    var photoSizeMHeight : Double = 0
+    var photoSizeMWidth : Double = 0
     var photoSizeS : String = ""
+    var photoSizeSHeight : Double = 0
+    var photoSizeSWidth : Double = 0
     //Идентификатор новости (если с "-" то группы в противном случае пользователь)
     var ownerID : Int = 0
     //Дата Новости
@@ -98,13 +104,21 @@ class NewsItems :  Decodable{
                     let photo = try sizeArray.nestedContainer(keyedBy: SizesKeys.self)
                     let photoType = try photo.decode(String.self, forKey: .type)
                     let photoURL = try photo.decode(String.self, forKey: .url)
+                    let photoHeight = try photo.decode(Double.self, forKey: .height)
+                    let photoWidth = try photo.decode(Double.self, forKey: .width)
                     switch photoType {
                     case "x":
                         self.photoSizeX = photoURL
+                        self.photoSizeXHeight = photoHeight
+                        self.photoSizeXWidth = photoWidth
                     case "s":
                         self.photoSizeS = photoURL
+                        self.photoSizeSHeight = photoHeight
+                        self.photoSizeSWidth = photoWidth
                     case "m":
                         self.photoSizeM = photoURL
+                        self.photoSizeMHeight = photoHeight
+                        self.photoSizeMWidth = photoWidth
                     default:
                         continue
                     }

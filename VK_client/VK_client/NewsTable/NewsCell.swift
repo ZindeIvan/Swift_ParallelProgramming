@@ -8,10 +8,6 @@
 
 import UIKit
 
-//protocol NewsCellDelegate : class {
-//    func newsCell(cell: NewsCell, didTappedThe button:UIButton?)
-//}
-
 class NewsCell : UITableViewCell {
     
     @IBOutlet private weak var newsIconView : UIImageView!
@@ -26,6 +22,8 @@ class NewsCell : UITableViewCell {
     @IBOutlet private weak var watchedCountLabel : UILabel!
     @IBOutlet private weak var shareLabel : UILabel!
     @IBOutlet private weak var commentLabel : UILabel!
+    
+    @IBOutlet private weak var newsImageHeightConstraint: NSLayoutConstraint!
     
     private var likePressed : Bool = false{
         didSet {
@@ -94,7 +92,18 @@ class NewsCell : UITableViewCell {
         self.commentLabel.text = String(news.commentsCount)
         self.shareLabel.text = String(news.repostsCount)
         //Установим картинку новости
+        
+        let photoWidth = news.photoSizeXWidth
+        let photoHeight = news.photoSizeXHeight
+        
+        var ratio: CGFloat = 1.0000
+        if photoHeight != 0 {
+            ratio = CGFloat(photoWidth) / CGFloat(photoHeight)
+        }
+        newsImageHeightConstraint.constant = ceil(newsImage.frame.width / ratio)
+        
         self.newsImage.sd_setImage(with: URL(string: news.photoSizeX), placeholderImage: UIImage(named: "newsImageError"))
+        
         //Установим иконку новости
         self.newsIconView.sd_setImage(with: URL(string: news.photo50), placeholderImage: UIImage(named: "error"))
         //Установим количество лайков
