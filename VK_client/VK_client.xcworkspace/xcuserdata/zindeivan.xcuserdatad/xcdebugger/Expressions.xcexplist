@@ -197,6 +197,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "NewsCell.showMoreIsPressed.didset:NewsCell.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "showMoreButton.titleLabel?.text ">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "GroupsTableViewController.tableView(_:numberOfRowsInSection:):GroupsTableViewController.swift">
          <PersistentStrings>
             <PersistentString
@@ -402,6 +410,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "NewsCell.changeNewsTextHeight(_:):NewsCell.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "showMoreIsPressed">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "closure #1 in GroupsTableViewController.loadGroupsFromNetwork(completion:):GroupsTableViewController.swift">
          <PersistentStrings>
             <PersistentString
@@ -428,6 +444,26 @@
          <PersistentStrings>
             <PersistentString
                value = "searchText == &quot;&quot;">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "NewsCell.configure(news:):NewsCell.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "showMoreButton.isHidden">
+            </PersistentString>
+            <PersistentString
+               value = "newsTextHeightConstraint.constant">
+            </PersistentString>
+            <PersistentString
+               value = "showMoreIsPressed ">
+            </PersistentString>
+            <PersistentString
+               value = "newsText.font">
+            </PersistentString>
+            <PersistentString
+               value = "newsText.text">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

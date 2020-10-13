@@ -22,8 +22,31 @@ class NewsCell : UITableViewCell {
     @IBOutlet private weak var watchedCountLabel : UILabel!
     @IBOutlet private weak var shareLabel : UILabel!
     @IBOutlet private weak var commentLabel : UILabel!
-    
     @IBOutlet private weak var newsImageHeightConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var newsTextHeightConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var showMoreButton: UIButton!
+    
+    //Стандартная высота текстового поля
+    private let newsTextHeightConstraintConst = CGFloat(95)
+    
+    var likeCount : Int = 0
+    
+    var delegate: NewsCellDelegate?
+     
+    //Свойство нажатия кнопки Показать больше
+    var showMoreIsPressed : Bool = false{
+        didSet {
+            if showMoreIsPressed {
+                let newsTextHeight = calculateLabelHeight(text: newsText.text ?? "", font: newsText.font)
+                newsTextHeightConstraint.constant = CGFloat(newsTextHeight)
+                showMoreButton.setTitle("Show less...", for: .normal)
+                
+            } else {
+                newsTextHeightConstraint.constant = CGFloat(newsTextHeightConstraintConst)
+                showMoreButton.setTitle("Show more...", for: .normal)
+            }
+        }
+    }
     
     private var likePressed : Bool = false{
         didSet {
@@ -50,32 +73,18 @@ class NewsCell : UITableViewCell {
         }
         
     }
-    
-    var likeCount : Int = 0{
-        didSet {
-            //Обновим количество лайков
-            //Зададим анимацию смены текста
-            let animationType : AnimationOptions
-            //Если старое значение меньше - справа и слева в обратном случае
-            if  oldValue < likeCount {
-                animationType = .transitionFlipFromRight
-            }
-            else {
-                animationType = .transitionFlipFromLeft
-            }
-            //Зададим анимацию смены текста
-            UIView.transition(with: self.likeLabel,
-                              duration: 0.5,
-                              options: animationType,
-                              animations: {
-                                self.likeLabel.text = String(self.likeCount)
-            })
-        }
-    }
+
     //Метод нажатия лайка
-    @IBAction func likeButtonPressed(_ sender: Any) {
+    @IBAction private func likeButtonPressed(_ sender: Any) {
         likePressed = !likePressed
     }
+    
+    //Метод нажатия кнопки Показать больше/меньше
+    @IBAction private func changeNewsTextHeight(_ sender: Any) {
+        showMoreIsPressed = !showMoreIsPressed
+        delegate?.showMoreButtonTapped(cell: self)
+    }
+    
     
     //Метод конфигурирования ячейки
     func configure(news: News){
@@ -83,6 +92,8 @@ class NewsCell : UITableViewCell {
         self.newsOwner.text = String(news.owner)
         //Установим текст новости
         self.newsText.text = news.text
+        //Сконфигурируем высоту текстового поля новостей
+        configureNewsTextHeight()
         //Установим дату новости
         self.newsDate.text = news.date
         //Установим количество просмотров
@@ -91,17 +102,9 @@ class NewsCell : UITableViewCell {
         self.likeLabel.text = String(news.likesCount)
         self.commentLabel.text = String(news.commentsCount)
         self.shareLabel.text = String(news.repostsCount)
+        //Сконфигурируем высоту изображения
+        configureNewsImageHeight(photoWidth: news.photoSizeXWidth, photoHeight: news.photoSizeXHeight)
         //Установим картинку новости
-        
-        let photoWidth = news.photoSizeXWidth
-        let photoHeight = news.photoSizeXHeight
-        
-        var ratio: CGFloat = 1.0000
-        if photoHeight != 0 {
-            ratio = CGFloat(photoWidth) / CGFloat(photoHeight)
-        }
-        newsImageHeightConstraint.constant = ceil(newsImage.frame.width / ratio)
-        
         self.newsImage.sd_setImage(with: URL(string: news.photoSizeX), placeholderImage: UIImage(named: "newsImageError"))
         
         //Установим иконку новости
@@ -109,4 +112,49 @@ class NewsCell : UITableViewCell {
         //Установим количество лайков
         self.likeCount = news.likesCount
     }
+    
+    //Метод вычисления высоты текстового поля по содержимому
+    private func calculateLabelHeight(text: String, font: UIFont) -> Double {
+        let maxWidth = newsText.frame.width
+        // получаем размеры блока под надпись
+        // используем максимальную ширину и максимально возможную высоту
+        let textBlock = CGSize(width: maxWidth, height: CGFloat.greatestFiniteMagnitude)
+        // получаем прямоугольник под текст в этом блоке и уточняем шрифт
+        let rect = text.boundingRect(with: textBlock, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: font], context: nil)
+        // получаем высоту блока, переводим её в Double
+        let height = Double(rect.size.height)
+        
+        return ceil(height)
+        
+    }
+    
+    //Метод установки высоты текстового поля
+    private func configureNewsTextHeight () {
+        let newsTextHeight = calculateLabelHeight(text: newsText.text ?? "", font: newsText.font)
+        if CGFloat(newsTextHeight) < newsTextHeightConstraintConst {
+            newsTextHeightConstraint.constant = CGFloat(newsTextHeight)
+            showMoreButton.isHidden = true
+        } else {
+            if showMoreIsPressed {
+                newsTextHeightConstraint.constant = CGFloat(newsTextHeight)
+            } else {
+                newsTextHeightConstraint.constant = newsTextHeightConstraintConst
+            }
+            showMoreButton.isHidden = false
+        }
+    }
+    
+    //Метод установки высоты изображения
+    private func configureNewsImageHeight (photoWidth: Double, photoHeight: Double) {
+        var ratio: CGFloat = 1.0000
+        if photoHeight != 0 {
+            ratio = CGFloat(photoWidth) / CGFloat(photoHeight)
+        }
+        newsImageHeightConstraint.constant = ceil(newsImage.frame.width / ratio)
+    }
+}
+
+//Протокол делегатов ячейки новостей
+protocol NewsCellDelegate {
+    func showMoreButtonTapped(cell: NewsCell)
 }

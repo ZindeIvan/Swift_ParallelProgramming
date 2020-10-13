@@ -46,15 +46,13 @@ extension NewsTableViewController : UITableViewDataSource, UITableViewDelegate  
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell") as? NewsCell else { fatalError() }
         //Сконфигурируем ячейку
         cell.configure(news: newsList[indexPath.row])
-        
+        cell.delegate = self
         return cell
     }
-    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
-    
     
 }
 
@@ -106,19 +104,21 @@ extension NewsTableViewController {
     }
 }
 
+//Расширения для предзагрузки новостей
 extension NewsTableViewController : UITableViewDataSourcePrefetching {
-    
+    //Метод определяет нужно ли предзагружать новости
     func isLoadingCell(for indexPath: IndexPath) -> Bool {
         return indexPath.row == (newsList.count - 3)
     }
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         if indexPaths.contains(where: isLoadingCell(for:)) {
-            // отправляем сетевой запрос загрузки новостей
+            //Jтправляем сетевой запрос загрузки новостей
             NetworkService.shared.loadNews(startFrom: Session.instance.nextFrom, token: Session.instance.token, filter: .post, newsCount: 20){ [weak self] result in
                 switch result {
                 case let .success(news):
                     DispatchQueue.main.async {
+                        //Добавим новости в конец ленты
                         self?.newsList += news as [News]
                         self?.newsTableView.reloadData()
                     }
@@ -130,4 +130,14 @@ extension NewsTableViewController : UITableViewDataSourcePrefetching {
             }
         }
     }
+}
+
+//Расширение для работы с увеличением высоты текстового поля ячейки
+extension NewsTableViewController : NewsCellDelegate {
+    //Метод срабатывает при нажатии кнопки ячейки ShowMore
+    func showMoreButtonTapped(cell: NewsCell) {
+        newsTableView.beginUpdates()
+        newsTableView.endUpdates()
+    }
+    
 }
