@@ -16,6 +16,12 @@ class Photo: Object, Decodable{
     @objc dynamic var photoSizeX : String = ""
     @objc dynamic var photoSizeM : String = ""
     @objc dynamic var photoSizeS : String = ""
+    var photoSizeXHeight : Double = 0
+    var photoSizeXWidth : Double = 0
+    var photoSizeMHeight : Double = 0
+    var photoSizeMWidth : Double = 0
+    var photoSizeSHeight : Double = 0
+    var photoSizeSWidth : Double = 0
 
     enum CodingKeys: String, CodingKey {
     case id
@@ -40,13 +46,21 @@ class Photo: Object, Decodable{
             let photo = try photosValues.nestedContainer(keyedBy: PhotoKeys.self)
             let photoType = try photo.decode(String.self, forKey: .type)
             let photoURL = try photo.decode(String.self, forKey: .url)
+            let photoHeight = try photo.decode(Double.self, forKey: .height)
+            let photoWidth = try photo.decode(Double.self, forKey: .width)
             switch photoType {
             case "x":
                 photoSizeX = photoURL
+                photoSizeXHeight = photoHeight
+                photoSizeXWidth = photoWidth
             case "s":
                 photoSizeS = photoURL
+                photoSizeSHeight = photoHeight
+                photoSizeSWidth = photoWidth
             case "m":
                 photoSizeM = photoURL
+                photoSizeMHeight = photoHeight
+                photoSizeMWidth = photoWidth
             default:
                 continue
             }
