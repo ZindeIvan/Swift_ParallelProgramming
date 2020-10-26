@@ -177,6 +177,25 @@ extension FriendsViewController: UITableViewDataSource {
         return indexPath
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+                
+        
+        let viewController = AsyncFriendsPhotoCollectionViewController()
+        guard let friend = sections[sectionsTitles[selectedIndexPath!.section]]?[selectedIndexPath!.row] else {
+            fatalError()
+        }
+        //Получим индекс массива друзей по имени пользователя
+        let index = friendsListSearchData?.firstIndex { (user) -> Bool in
+            if user.id == friend.id  {
+                return true
+            }
+            return false
+        }
+        viewController.friendID = friendsListSearchData?[index!].id
+        navigationController?.pushViewController(viewController,
+                                                 animated: true)
+    }
+    
     //Метод получения полного имени из имени и фамилии
     private func getFullName (_ firstName : String?,_ lastName : String?) -> String{
         return (firstName ?? "") + " " + (lastName ?? "")

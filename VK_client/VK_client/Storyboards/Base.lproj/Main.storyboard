@@ -95,7 +95,6 @@
                                             <outlet property="iconShadowHeightConstraint" destination="0Kf-Jm-SBq" id="YnV-Nb-I5X"/>
                                             <outlet property="iconShadowView" destination="19z-mt-xov" id="Hyc-pS-dVz"/>
                                             <outlet property="iconShadowWidthConstraint" destination="adr-wm-O4f" id="gTc-b8-o9F"/>
-                                            <segue destination="xj2-cS-mWp" kind="show" identifier="FriendsPhotoSegue" id="cdc-4g-Ctm"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -200,7 +199,7 @@
             <objects>
                 <viewController id="w6Y-GD-GO5" customClass="PhotoViewController" customModule="VK_client" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="K9v-dD-SBA">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <viewLayoutGuide key="safeArea" id="g65-0b-4Cb"/>
